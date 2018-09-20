@@ -1,0 +1,5 @@
+Main-Class: main.Pocetna
+Class-Path: mysql-connector-java-5.1.38.jar jcalendar-1.4.jar
+
+
+
