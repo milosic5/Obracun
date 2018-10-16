@@ -38,7 +38,7 @@
                           <Component id="datumUtovaraPanel" alignment="0" min="-2" pref="133" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="sad" pref="488" max="32767" attributes="0"/>
+                      <Component id="sad" pref="592" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">

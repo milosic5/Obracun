@@ -1,7 +1,6 @@
 package dao;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,7 +12,6 @@ import model.Korisnik;
 import model.Mesec;
 import model.Prihod;
 import model.Rashod;
-import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 
 /**
  *
@@ -167,6 +165,7 @@ public class ProjectDao {
                     r.setNaziv(rs.getString("NAZIV_RASHODA"));
                     r.setPlaniranaVrednost(rs.getInt("PLANIRANA_VREDNOST"));
                     r.setRealizovanaVrednost(rs.getInt("REALIZOVANA_VREDNOST"));
+                    r.setRealizovano(rs.getBoolean("REALIZOVANO"));
                     retvalue.add(r);
                 }
             }
@@ -278,6 +277,49 @@ public class ProjectDao {
         return retvalue;
     }
 
+    public Rashod ucitajRashodPoNazivu(String naziv) {
+        Rashod retvalue = null;
+        Connection connection = getDBConnection();
+        if (connection == null) {
+            return retvalue;
+        }
+        String queryStr = "";
+        try {
+            ResultSet rs;
+            Statement statement;
+
+            queryStr = "SELECT * FROM rashodi WHERE NAZIV_RASHODA= '" + naziv + "'";
+            statement = connection.createStatement();
+            rs = statement.executeQuery(queryStr);
+
+            while (rs.next()) {
+                retvalue = new Rashod();
+                retvalue.setPlaniranaVrednost(rs.getInt("PLANIRANA_VREDNOST"));
+                retvalue.setRealizovanaVrednost(rs.getInt("REALIZOVANA_VREDNOST"));
+                retvalue.setRealizovano(rs.getBoolean("REALIZOVANO"));
+                retvalue.setNaziv(naziv);
+            }
+
+            rs.close();
+            rs = null;
+            statement.close();
+            statement = null;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+
+        return retvalue;
+    }
+
     public boolean sacuvajPrihod(Prihod prihod) {
         boolean retValue = false;
         Connection connection = getDBConnection();
@@ -358,12 +400,13 @@ public class ProjectDao {
         String queryStr = "";
         try {
 
-            queryStr = "INSERT INTO rashodi (NAZIV_RASHODA,PLANIRANA_VREDNOST,REALIZOVANA_VREDNOST) VALUES(?,?,?)";
+            queryStr = "INSERT INTO rashodi (NAZIV_RASHODA,PLANIRANA_VREDNOST,REALIZOVANA_VREDNOST,REALIZOVANO) VALUES(?,?,?,?)";
 
             PreparedStatement statement = connection.prepareStatement(queryStr);
             statement.setString(1, rashod.getNaziv());
             statement.setInt(2, rashod.getPlaniranaVrednost());
             statement.setInt(3, rashod.getRealizovanaVrednost());
+            statement.setBoolean(4, rashod.isRealizovano());
             statement.executeUpdate();
             statement.close();
             statement = null;
@@ -392,12 +435,13 @@ public class ProjectDao {
         String queryStr = "";
         try {
 
-            queryStr = "UPDATE rashodi set NAZIV_RASHODA=?,PLANIRANA_VREDNOST=?,REALIZOVANA_VREDNOST=? WHERE NAZIV_RASHODA='" + rashod.getNaziv() + "'";
+            queryStr = "UPDATE rashodi set NAZIV_RASHODA=?,PLANIRANA_VREDNOST=?,REALIZOVANA_VREDNOST=?,REALIZOVANO=? WHERE NAZIV_RASHODA='" + rashod.getNaziv() + "'";
 
             PreparedStatement statement = connection.prepareStatement(queryStr);
             statement.setString(1, rashod.getNaziv());
             statement.setInt(2, rashod.getPlaniranaVrednost());
             statement.setInt(3, rashod.getRealizovanaVrednost());
+            statement.setBoolean(4, rashod.isRealizovano());
             statement.executeUpdate();
             statement.close();
             statement = null;
@@ -618,8 +662,8 @@ public class ProjectDao {
 
         return retvalue;
     }
-    
-    public int vratiUkupnePrihode() {
+
+    public int vratiRealizovanePrihode() {
         int retvalue = 0;
         Connection connection = getDBConnection();
         if (connection == null) {
@@ -657,8 +701,8 @@ public class ProjectDao {
 
         return retvalue;
     }
-    
-     public int vratiUkupneRashode() {
+
+    public int vratiRealizovaneRashode() {
         int retvalue = 0;
         Connection connection = getDBConnection();
         if (connection == null) {
@@ -696,8 +740,8 @@ public class ProjectDao {
 
         return retvalue;
     }
-     
-     public int vratiProsecnuPlatu() {
+
+    public int vratiProsecnuPlatu() {
         int retvalue = 0;
         Connection connection = getDBConnection();
         if (connection == null) {
@@ -714,6 +758,45 @@ public class ProjectDao {
 
             while (rs.next()) {
                 retvalue = rs.getInt("prosek");
+            }
+
+            rs.close();
+            rs = null;
+            statement.close();
+            statement = null;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+
+        return retvalue;
+    }
+
+    public int vratiOcekivaneRashode() {
+        int retvalue = 0;
+        Connection connection = getDBConnection();
+        if (connection == null) {
+            return retvalue;
+        }
+        String queryStr = "";
+        try {
+            ResultSet rs;
+            Statement statement;
+
+            queryStr = "SELECT sum(`PLANIRANA_VREDNOST`) as ukupno FROM rashodi;";
+            statement = connection.createStatement();
+            rs = statement.executeQuery(queryStr);
+
+            while (rs.next()) {
+                retvalue = rs.getInt("ukupno");
             }
 
             rs.close();

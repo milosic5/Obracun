@@ -10,7 +10,16 @@ public class Rashod {
     private String naziv;
     private int planiranaVrednost;
     private int realizovanaVrednost;
+    private boolean realizovano;
 
+    public boolean isRealizovano() {
+        return realizovano;
+    }
+
+    public void setRealizovano(boolean realizovano) {
+        this.realizovano = realizovano;
+    }
+    
     public String getNaziv() {
         return naziv;
     }

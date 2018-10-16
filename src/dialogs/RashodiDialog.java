@@ -6,8 +6,16 @@
 package dialogs;
 
 import controller.CentralPoint;
+import java.awt.Color;
+import java.awt.Component;
 import java.util.ArrayList;
+import javafx.scene.layout.Border;
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.table.TableCellRenderer;
 import model.Rashod;
 import tableModel.RashodTableModel;
 
@@ -23,11 +31,12 @@ public class RashodiDialog extends javax.swing.JDialog {
     public RashodiDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        this.setTitle("UNOS CEKOVA");
+        this.setTitle("RASHODI");
         this.setLocationRelativeTo(parent);
         rashodiTable.setModel(tableModel);
         listaRashoda = new ArrayList<>();
         updateData();
+        rashodiTable.getColumnModel().getColumn(4).setCellRenderer(new ColorRenderer());
 
         rashodiTable.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
@@ -41,8 +50,7 @@ public class RashodiDialog extends javax.swing.JDialog {
                     nazivTextField.setText(rashodiTable.getValueAt(row, 1).toString());
                     planiranoTextField.setText(String.valueOf(rashodiTable.getValueAt(row, 2)));
                     realizovanoTextField.setText(String.valueOf(rashodiTable.getValueAt(row, 3)));
-                } else {
-
+                    realizovanoCheckBox.setSelected(CentralPoint.getInstance().getProjectDao().ucitajRashodPoNazivu(rashodiTable.getValueAt(row, 1).toString()).isRealizovano());
                 }
 
             }
@@ -64,10 +72,11 @@ public class RashodiDialog extends javax.swing.JDialog {
         jScrollPane1 = new javax.swing.JScrollPane();
         rashodiTable = new javax.swing.JTable();
         exitButton = new javax.swing.JButton();
+        realizovanoCheckBox = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        sacuvajButton.setText("Sacuvaj");
+        sacuvajButton.setText("Sačuvaj");
         sacuvajButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 sacuvajButtonActionPerformed(evt);
@@ -106,17 +115,20 @@ public class RashodiDialog extends javax.swing.JDialog {
             }
         });
 
+        realizovanoCheckBox.setText("Realizovano");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(25, 25, 25)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(sacuvajButton, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(exitButton, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(25, 25, 25)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -126,13 +138,13 @@ public class RashodiDialog extends javax.swing.JDialog {
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(planiranoTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE)
                                     .addComponent(realizovanoTextField)))
-                            .addComponent(sacuvajButton, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel1)
                                 .addGap(18, 18, 18)
-                                .addComponent(nazivTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(nazivTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(realizovanoCheckBox))
                         .addGap(40, 40, 40)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 411, Short.MAX_VALUE)))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 511, Short.MAX_VALUE)))
                 .addGap(29, 29, 29))
         );
         layout.setVerticalGroup(
@@ -152,14 +164,20 @@ public class RashodiDialog extends javax.swing.JDialog {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel3)
                             .addComponent(realizovanoTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(26, 26, 26)
-                        .addComponent(sacuvajButton))
+                        .addGap(29, 29, 29)
+                        .addComponent(realizovanoCheckBox))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(18, 18, 18)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(18, 18, 18)
-                .addComponent(exitButton)
-                .addContainerGap(15, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(exitButton)
+                        .addContainerGap(15, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(sacuvajButton)
+                        .addGap(23, 23, 23))))
         );
 
         pack();
@@ -175,16 +193,18 @@ public class RashodiDialog extends javax.swing.JDialog {
         rashod.setNaziv(nazivTextField.getText());
         rashod.setPlaniranaVrednost(Integer.parseInt(planiranoTextField.getText()));
         rashod.setRealizovanaVrednost(Integer.parseInt(realizovanoTextField.getText()));
+        rashod.setRealizovano(realizovanoCheckBox.isSelected());
+
         for (Rashod rashod1 : listaRashoda) {
             if (rashod.getNaziv().equals(rashod1.getNaziv())) {
                 azurirano = CentralPoint.getInstance().getProjectDao().azurirajRashod(rashod);
-                JOptionPane.showMessageDialog(this, "Uspesno ste azurirali rashod");
+                JOptionPane.showMessageDialog(this, "Uspešno ste ažurirali rashod");
                 updateData();
             }
         }
         if (!azurirano) {
             if (CentralPoint.getInstance().getProjectDao().sacuvajRashod(rashod)) {
-                JOptionPane.showMessageDialog(this, "Uspesno ste sacuvali rashod");
+                JOptionPane.showMessageDialog(this, "Uspešno ste sačuvali rashod");
                 clearData();
                 updateData();
             }
@@ -243,6 +263,7 @@ public class RashodiDialog extends javax.swing.JDialog {
     private javax.swing.JTextField nazivTextField;
     private javax.swing.JTextField planiranoTextField;
     private javax.swing.JTable rashodiTable;
+    private javax.swing.JCheckBox realizovanoCheckBox;
     private javax.swing.JTextField realizovanoTextField;
     private javax.swing.JButton sacuvajButton;
     // End of variables declaration//GEN-END:variables
@@ -260,9 +281,33 @@ public class RashodiDialog extends javax.swing.JDialog {
         if (listaRashoda.size() > 0) {
             for (Rashod rashod : listaRashoda) {
                 id++;
-                tableModel.insertRow(id, rashod.getNaziv(), rashod.getPlaniranaVrednost(), rashod.getRealizovanaVrednost());
+                tableModel.insertRow(id, rashod.getNaziv(), rashod.getPlaniranaVrednost(), rashod.getRealizovanaVrednost(), rashod.isRealizovano());
             }
 
+        }
+    }
+
+    private class ColorRenderer extends JLabel implements TableCellRenderer {
+
+        public ColorRenderer() {
+            setOpaque(true);
+        }
+
+        public Component getTableCellRendererComponent(
+                JTable table, Object value,
+                boolean isSelected, boolean hasFocus,
+                int row, int column) {
+            javax.swing.border.Border border = BorderFactory.createLineBorder(Color.GRAY, 1);
+            if (column == 4) {
+                if (table.getValueAt(row, column).equals(true)) {
+                    setBackground(new Color(34, 139, 34));
+                    setBorder(border);
+                } else {
+                    setBorder(border);
+                    setBackground(Color.RED);
+                }
+            }
+            return this;
         }
     }
 }

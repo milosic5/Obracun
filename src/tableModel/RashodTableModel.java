@@ -10,8 +10,8 @@ import javax.swing.table.AbstractTableModel;
  */
 public class RashodTableModel extends AbstractTableModel {
 
-    private String[] tableColumnsNames = {"ID", "Naziv", "Planirana", "Realizovana"};
-    private Class[] classesColumns = {Integer.class, String.class, Integer.class, Integer.class};
+    private String[] tableColumnsNames = {"ID", "Naziv", "Planirana", "Očekivana","Realizovano"};
+    private Class[] classesColumns = {Integer.class, String.class, Integer.class, Integer.class,Boolean.class};
 
     private ArrayList listaRashoda = new ArrayList();
 
@@ -54,8 +54,8 @@ public class RashodTableModel extends AbstractTableModel {
         fireTableCellUpdated(rowIndex, columnIndex);
     }
 
-    public void insertRow(int id, String naziv, int planirana_vrednost, int realizovana_vrednost) {
-        Object[] allElements = {id, naziv, planirana_vrednost, realizovana_vrednost};
+    public void insertRow(int id, String naziv, int planirana_vrednost, int realizovana_vrednost,boolean realizovano) {
+        Object[] allElements = {id, naziv, planirana_vrednost, realizovana_vrednost,realizovano};
         listaRashoda.add(allElements);
         fireTableDataChanged();
     }

@@ -7,14 +7,19 @@ import dialogs.PrijavaDIalog;
 import dialogs.RashodiDialog;
 import java.awt.Dimension;
 import java.awt.Toolkit;
-
+import java.text.NumberFormat;
 
 public class Pocetna extends javax.swing.JFrame {
-    
+
     PrihodiDialog prihodiDialog;
     RashodiDialog rashodiDialog;
     CekoviDialog cekoviDialog;
-    
+    int realizovaniPrihodi = 0;
+    int realizovaniRashodi = 0;
+    int ocekivaniPrihodi = 0;
+    int ocekivaniRashodi = 0;
+    int prosecnaPlata = 0;
+
     public Pocetna() {
         initComponents();
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -24,11 +29,24 @@ public class Pocetna extends javax.swing.JFrame {
         prihodiDialog = new PrihodiDialog(this, true);
         rashodiDialog = new RashodiDialog(this, true);
         cekoviDialog = new CekoviDialog(this, true);
-        ukupnoPrihodaLabel.setText(String.valueOf(CentralPoint.getInstance().getProjectDao().vratiUkupnePrihode()));
-        ukupnoRashodaLabel.setText(String.valueOf(CentralPoint.getInstance().getProjectDao().vratiUkupneRashode()));
-        prosecnaPlataLabel.setText(String.valueOf(CentralPoint.getInstance().getProjectDao().vratiProsecnuPlatu()));
+        updateData();
+
     }
-    
+
+    public void updateData() {
+
+        realizovaniPrihodi = CentralPoint.getInstance().getProjectDao().vratiRealizovanePrihode();
+        realizovaniRashodi = CentralPoint.getInstance().getProjectDao().vratiRealizovaneRashode();
+        ocekivaniPrihodi = 12 * 85000;
+        ocekivaniRashodi = CentralPoint.getInstance().getProjectDao().vratiOcekivaneRashode();
+        prosecnaPlata = CentralPoint.getInstance().getProjectDao().vratiProsecnuPlatu();
+
+        ukupnoPrihodaLabel.setText(String.valueOf(NumberFormat.getInstance().format(realizovaniPrihodi)) + " / " + String.valueOf(NumberFormat.getInstance().format(ocekivaniPrihodi)));
+        ukupnoRashodaLabel.setText(String.valueOf(NumberFormat.getInstance().format(realizovaniRashodi)) + " / " + String.valueOf(NumberFormat.getInstance().format(ocekivaniRashodi)));
+        prosecnaPlataLabel.setText(String.valueOf(NumberFormat.getInstance().format(prosecnaPlata)));
+
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -40,11 +58,10 @@ public class Pocetna extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
         prosecnaPlataLabel = new javax.swing.JLabel();
         ukupnoPrihodaLabel = new javax.swing.JLabel();
         ukupnoRashodaLabel = new javax.swing.JLabel();
+        refreshButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -79,16 +96,16 @@ public class Pocetna extends javax.swing.JFrame {
         jLabel7.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         jLabel7.setForeground(new java.awt.Color(51, 102, 255));
         jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel7.setText("OBRACUN ZARADA I TROSKOVA ZA 2018. GODINU");
+        jLabel7.setText("OBRAČUN ZARADA I TROŠKOVA ZA 2018. GODINU");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(15, 15, 15)
-                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 584, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 472, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -99,13 +116,7 @@ public class Pocetna extends javax.swing.JFrame {
         );
 
         jLabel1.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        jLabel1.setText("PROSECNA PLATA:");
-
-        jLabel2.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        jLabel2.setText("UKUPNO PRIHODA:");
-
-        jLabel3.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        jLabel3.setText("UKUPNO RASHODA:");
+        jLabel1.setText("PROSEČNA PLATA:");
 
         prosecnaPlataLabel.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         prosecnaPlataLabel.setForeground(new java.awt.Color(0, 102, 255));
@@ -116,6 +127,13 @@ public class Pocetna extends javax.swing.JFrame {
         ukupnoRashodaLabel.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         ukupnoRashodaLabel.setForeground(new java.awt.Color(255, 102, 102));
 
+        refreshButton.setText("Osveži");
+        refreshButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -124,32 +142,30 @@ public class Pocetna extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(75, 75, 75)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(cekoviButton, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(155, 155, 155)
-                        .addComponent(jLabel3))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(rashodiButton)
-                            .addComponent(prihodiButtonž, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(155, 155, 155)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel2))))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(42, 42, 42)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(rashodiButton)
+                    .addComponent(prihodiButtonž, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cekoviButton, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(26, 26, 26)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(45, 45, 45)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(ukupnoPrihodaLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 82, Short.MAX_VALUE)
-                            .addComponent(prosecnaPlataLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(ukupnoRashodaLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(101, 101, 101)
-                        .addComponent(izlazButton, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(27, 27, 27))
+                        .addComponent(jLabel1)
+                        .addGap(18, 18, 18)
+                        .addComponent(prosecnaPlataLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(layout.createSequentialGroup()
+                            .addGap(1, 1, 1)
+                            .addComponent(ukupnoRashodaLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(ukupnoPrihodaLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(296, 296, 296)
+                .addComponent(refreshButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(izlazButton, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(20, 20, 20))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -158,31 +174,26 @@ public class Pocetna extends javax.swing.JFrame {
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(prihodiButtonž)
-                        .addComponent(jLabel1))
-                    .addComponent(prosecnaPlataLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(prihodiButtonž)
+                    .addComponent(ukupnoPrihodaLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(23, 23, 23)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(rashodiButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(ukupnoRashodaLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(23, 23, 23)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(layout.createSequentialGroup()
+                            .addGap(5, 5, 5)
+                            .addComponent(jLabel1))
+                        .addComponent(prosecnaPlataLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(23, 23, 23)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(rashodiButton)
-                            .addComponent(jLabel2)))
-                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(cekoviButton)
                         .addGap(18, 18, 18)
-                        .addComponent(ukupnoPrihodaLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(23, 23, 23)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(cekoviButton)
-                            .addComponent(jLabel3)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addComponent(ukupnoRashodaLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(34, 34, 34)
-                .addComponent(izlazButton)
-                .addGap(18, 18, 18))
+                            .addComponent(refreshButton)
+                            .addComponent(izlazButton))))
+                .addContainerGap(11, Short.MAX_VALUE))
         );
 
         pack();
@@ -203,7 +214,11 @@ public class Pocetna extends javax.swing.JFrame {
     private void cekoviButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cekoviButtonActionPerformed
         cekoviDialog.setVisible(true);
     }//GEN-LAST:event_cekoviButtonActionPerformed
-    
+
+    private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
+        updateData();
+    }//GEN-LAST:event_refreshButtonActionPerformed
+
     public static void main(String args[]) {
 
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -247,13 +262,12 @@ public class Pocetna extends javax.swing.JFrame {
     private javax.swing.JButton cekoviButton;
     private javax.swing.JButton izlazButton;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JButton prihodiButtonž;
     private javax.swing.JLabel prosecnaPlataLabel;
     private javax.swing.JButton rashodiButton;
+    private javax.swing.JButton refreshButton;
     private javax.swing.JLabel ukupnoPrihodaLabel;
     private javax.swing.JLabel ukupnoRashodaLabel;
     // End of variables declaration//GEN-END:variables

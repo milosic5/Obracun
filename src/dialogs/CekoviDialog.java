@@ -7,20 +7,17 @@ package dialogs;
 
 import com.toedter.calendar.JDateChooser;
 import controller.CentralPoint;
+import java.awt.Color;
 import java.awt.Component;
 import java.util.ArrayList;
 import java.util.Date;
 import javax.swing.BoxLayout;
-import javax.swing.JComponent;
 import javax.swing.JPanel;
-import javax.swing.JSpinner;
+import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.SpinnerDateModel;
-import javax.swing.SpinnerModel;
+import javax.swing.table.TableCellRenderer;
 import model.Cek;
-import model.Rashod;
 import tableModel.CekoviTableModel;
-import tableModel.RashodTableModel;
 
 /**
  *
@@ -32,18 +29,19 @@ public class CekoviDialog extends javax.swing.JDialog {
     ArrayList<Cek> listaCekova;
     private JDateChooser datumUtovaraChooser;
     private JDateChooser datumOtpremeChooser;
-    private JSpinner vremeUtovaraSpinner, vremeOtpremeSpinner;
 
     public CekoviDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        this.setTitle("UNOS CEKOVA");
+        this.setTitle("UNOS ČEKOVA");
         this.setLocationRelativeTo(parent);
         cekoviTable.setModel(tableModel);
         listaCekova = new ArrayList<>();
         datumOtpremeChooser = new JDateChooser();
         updateData();
         createDatePanels();
+        
+        cekoviTable.getColumnModel().getColumn(4).setCellRenderer(new ColorRenderer());
 
         cekoviTable.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
@@ -138,7 +136,7 @@ public class CekoviDialog extends javax.swing.JDialog {
                             .addComponent(jLabel3)
                             .addComponent(datumUtovaraPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
-                        .addComponent(sad, javax.swing.GroupLayout.DEFAULT_SIZE, 488, Short.MAX_VALUE)
+                        .addComponent(sad, javax.swing.GroupLayout.DEFAULT_SIZE, 592, Short.MAX_VALUE)
                         .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(sacuvajButton)
@@ -308,5 +306,27 @@ public class CekoviDialog extends javax.swing.JDialog {
         vrednostTextField.setText("");
         createDatePanels();
         realizovanCheckBox.setSelected(false);
+    }
+
+    private class ColorRenderer extends JTextField implements TableCellRenderer {
+
+        public ColorRenderer() {
+            setOpaque(true); //MUST do this for background to show up.
+        }
+
+        public Component getTableCellRendererComponent(
+                JTable table, Object value,
+                boolean isSelected, boolean hasFocus,
+                int row, int column) {
+
+            if (column == 4) {
+                if (table.getValueAt(row, column).equals(true)) {
+                    setBackground(new Color(34,139,34));
+                } else {
+                    setBackground(Color.RED);
+                }
+            }
+            return this;
+        }
     }
 }
