@@ -14,6 +14,15 @@ public class PrihodiDialog extends javax.swing.JDialog {
 
     ArrayList<Mesec> listaMeseci;
     int plata;
+    int godina;
+
+    public int getGodina() {
+        return godina;
+    }
+
+    public void setGodina(int godina) {
+        this.godina = godina;
+    }
 
     public PrihodiDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -174,11 +183,11 @@ public class PrihodiDialog extends javax.swing.JDialog {
             Mesec mesec = CentralPoint.getInstance().getProjectDao().vratiMesecPoNazivu(meseciComboBox.getSelectedItem().toString());
             int idMeseca = mesec.getId();
 
-            plata = CentralPoint.getInstance().getProjectDao().ucitajPlatu(idMeseca);
+            plata = CentralPoint.getInstance().getProjectDao().ucitajPlatu(idMeseca,getGodina());
             plataLabel.setText(String.valueOf(plata));
 
             Prihod prihod = new Prihod();
-            prihod = CentralPoint.getInstance().getProjectDao().ucitajPrihodPoMesecu(idMeseca);
+            prihod = CentralPoint.getInstance().getProjectDao().ucitajPrihodPoMesecu(idMeseca,getGodina());
             System.out.println("prihod s " + prihod);
             if (prihod != null) {
                 prikaziPrihode(prihod);
@@ -209,17 +218,17 @@ public class PrihodiDialog extends javax.swing.JDialog {
             ArrayList<Prihod> listaPrihoda = CentralPoint.getInstance().getProjectDao().ucitajSvePrihode();
             for (Prihod prihod1 : listaPrihoda) {
                 if (prihod.getMesecID() == prihod1.getMesecID()) {
-                    azurirano = CentralPoint.getInstance().getProjectDao().azurirajPrihod(prihod);
+                    azurirano = CentralPoint.getInstance().getProjectDao().azurirajPrihod(prihod,getGodina());
                     JOptionPane.showMessageDialog(this, "Uspesno ste azurirali prihod");
                 }
             }
             if (!azurirano) {
-                if (CentralPoint.getInstance().getProjectDao().sacuvajPrihod(prihod)) {
+                if (CentralPoint.getInstance().getProjectDao().sacuvajPrihod(prihod,getGodina())) {
                     JOptionPane.showMessageDialog(this, "Uspesno ste sacuvali prihod");
                     clearData();
                 }
             }
-            plata = CentralPoint.getInstance().getProjectDao().ucitajPlatu(mesec.getId());
+            plata = CentralPoint.getInstance().getProjectDao().ucitajPlatu(mesec.getId(),godina);
             plataLabel.setText(String.valueOf(plata));
         }
     }//GEN-LAST:event_sacuvajButtonActionPerformed

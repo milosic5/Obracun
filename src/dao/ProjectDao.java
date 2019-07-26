@@ -144,7 +144,7 @@ public class ProjectDao {
         return retvalue;
     }
 
-    public ArrayList<Rashod> ucitajRashode() {
+    public ArrayList<Rashod> ucitajRashode(int godina) {
         ArrayList<Rashod> retvalue = null;
         Connection connection = getDBConnection();
         if (connection == null) {
@@ -155,7 +155,7 @@ public class ProjectDao {
             ResultSet rs;
             Statement statement;
 
-            queryStr = "SELECT * FROM rashodi";
+            queryStr = "SELECT * FROM rashodi where GODINA=" + godina + "";
             statement = connection.createStatement();
             rs = statement.executeQuery(queryStr);
             retvalue = new ArrayList<>();
@@ -234,7 +234,7 @@ public class ProjectDao {
         return retvalue;
     }
 
-    public Prihod ucitajPrihodPoMesecu(int idMeseca) {
+    public Prihod ucitajPrihodPoMesecu(int idMeseca, int godina) {
         Prihod retvalue = null;
         Connection connection = getDBConnection();
         if (connection == null) {
@@ -245,7 +245,7 @@ public class ProjectDao {
             ResultSet rs;
             Statement statement;
 
-            queryStr = "SELECT * FROM prihodi WHERE MESEC_ID= " + idMeseca + "";
+            queryStr = "SELECT * FROM prihodi WHERE GODINA=" + godina + " and MESEC_ID= " + idMeseca + "";
             statement = connection.createStatement();
             rs = statement.executeQuery(queryStr);
 
@@ -320,7 +320,7 @@ public class ProjectDao {
         return retvalue;
     }
 
-    public boolean sacuvajPrihod(Prihod prihod) {
+    public boolean sacuvajPrihod(Prihod prihod, int godina) {
         boolean retValue = false;
         Connection connection = getDBConnection();
         if (connection == null) {
@@ -329,7 +329,7 @@ public class ProjectDao {
         String queryStr = "";
         try {
 
-            queryStr = "INSERT INTO prihodi (AKONTACIJA,DRUGI_DEO,BONUS,TEREN,MESEC_ID) VALUES(?,?,?,?,?)";
+            queryStr = "INSERT INTO prihodi (AKONTACIJA,DRUGI_DEO,BONUS,TEREN,MESEC_ID,GODINA) VALUES(?,?,?,?,?,?)";
 
             PreparedStatement statement = connection.prepareStatement(queryStr);
             statement.setInt(1, prihod.getAkontacija());
@@ -337,6 +337,7 @@ public class ProjectDao {
             statement.setInt(3, prihod.getBonus());
             statement.setInt(4, prihod.getTeren());
             statement.setInt(5, prihod.getMesecID());
+            statement.setInt(6, godina);
             statement.executeUpdate();
             statement.close();
             statement = null;
@@ -356,7 +357,7 @@ public class ProjectDao {
         return retValue;
     }
 
-    public boolean azurirajPrihod(Prihod prihod) {
+    public boolean azurirajPrihod(Prihod prihod, int godina) {
         boolean retValue = false;
         Connection connection = getDBConnection();
         if (connection == null) {
@@ -365,7 +366,7 @@ public class ProjectDao {
         String queryStr = "";
         try {
 
-            queryStr = "UPDATE prihodi set AKONTACIJA=?,DRUGI_DEO=?,BONUS=?,TEREN=? WHERE MESEC_ID=" + prihod.getMesecID() + "";
+            queryStr = "UPDATE prihodi set AKONTACIJA=?,DRUGI_DEO=?,BONUS=?,TEREN=? WHERE MESEC_ID=" + prihod.getMesecID() + " and GODINA=" + godina + "";
 
             PreparedStatement statement = connection.prepareStatement(queryStr);
             statement.setInt(1, prihod.getAkontacija());
@@ -391,7 +392,7 @@ public class ProjectDao {
         return retValue;
     }
 
-    public boolean sacuvajRashod(Rashod rashod) {
+    public boolean sacuvajRashod(Rashod rashod, int godina) {
         boolean retValue = false;
         Connection connection = getDBConnection();
         if (connection == null) {
@@ -400,13 +401,14 @@ public class ProjectDao {
         String queryStr = "";
         try {
 
-            queryStr = "INSERT INTO rashodi (NAZIV_RASHODA,PLANIRANA_VREDNOST,REALIZOVANA_VREDNOST,REALIZOVANO) VALUES(?,?,?,?)";
+            queryStr = "INSERT INTO rashodi (NAZIV_RASHODA,PLANIRANA_VREDNOST,REALIZOVANA_VREDNOST,REALIZOVANO,GODINA) VALUES(?,?,?,?,?)";
 
             PreparedStatement statement = connection.prepareStatement(queryStr);
             statement.setString(1, rashod.getNaziv());
             statement.setInt(2, rashod.getPlaniranaVrednost());
             statement.setInt(3, rashod.getRealizovanaVrednost());
             statement.setBoolean(4, rashod.isRealizovano());
+            statement.setInt(5, godina);
             statement.executeUpdate();
             statement.close();
             statement = null;
@@ -426,7 +428,7 @@ public class ProjectDao {
         return retValue;
     }
 
-    public boolean azurirajRashod(Rashod rashod) {
+    public boolean azurirajRashod(Rashod rashod, int godina) {
         boolean retValue = false;
         Connection connection = getDBConnection();
         if (connection == null) {
@@ -435,13 +437,14 @@ public class ProjectDao {
         String queryStr = "";
         try {
 
-            queryStr = "UPDATE rashodi set NAZIV_RASHODA=?,PLANIRANA_VREDNOST=?,REALIZOVANA_VREDNOST=?,REALIZOVANO=? WHERE NAZIV_RASHODA='" + rashod.getNaziv() + "'";
+            queryStr = "UPDATE rashodi set NAZIV_RASHODA=?,PLANIRANA_VREDNOST=?,REALIZOVANA_VREDNOST=?,REALIZOVANO=? WHERE godina=" + godina + " and NAZIV_RASHODA='" + rashod.getNaziv() + "'";
 
             PreparedStatement statement = connection.prepareStatement(queryStr);
             statement.setString(1, rashod.getNaziv());
             statement.setInt(2, rashod.getPlaniranaVrednost());
             statement.setInt(3, rashod.getRealizovanaVrednost());
             statement.setBoolean(4, rashod.isRealizovano());
+            statement.setInt(5, godina);
             statement.executeUpdate();
             statement.close();
             statement = null;
@@ -624,7 +627,7 @@ public class ProjectDao {
         return retvalue;
     }
 
-    public int ucitajPlatu(int idMeseca) {
+    public int ucitajPlatu(int idMeseca, int godina) {
         int retvalue = 0;
         Connection connection = getDBConnection();
         if (connection == null) {
@@ -635,7 +638,7 @@ public class ProjectDao {
             ResultSet rs;
             Statement statement;
 
-            queryStr = "SELECT AKONTACIJA+BONUS+TEREN+DRUGI_DEO AS PLATA FROM prihodi WHERE MESEC_ID=" + idMeseca + "";
+            queryStr = "SELECT AKONTACIJA+BONUS+TEREN+DRUGI_DEO AS PLATA FROM prihodi WHERE GODINA=" + godina + " and MESEC_ID=" + idMeseca + "";
             statement = connection.createStatement();
             rs = statement.executeQuery(queryStr);
 
@@ -663,7 +666,7 @@ public class ProjectDao {
         return retvalue;
     }
 
-    public int vratiRealizovanePrihode() {
+    public int vratiRealizovanePrihode(int godina) {
         int retvalue = 0;
         Connection connection = getDBConnection();
         if (connection == null) {
@@ -674,7 +677,7 @@ public class ProjectDao {
             ResultSet rs;
             Statement statement;
 
-            queryStr = "SELECT sum(`AKONTACIJA`+`DRUGI_DEO`+`BONUS`+`TEREN`) as ukupno FROM prihodi;";
+            queryStr = "SELECT sum(`AKONTACIJA`+`DRUGI_DEO`+`BONUS`+`TEREN`) as ukupno FROM prihodi where GODINA=" + godina + "";
             statement = connection.createStatement();
             rs = statement.executeQuery(queryStr);
 
@@ -702,7 +705,7 @@ public class ProjectDao {
         return retvalue;
     }
 
-    public int vratiRealizovaneRashode() {
+    public int vratiRealizovaneRashode(int godina) {
         int retvalue = 0;
         Connection connection = getDBConnection();
         if (connection == null) {
@@ -713,7 +716,7 @@ public class ProjectDao {
             ResultSet rs;
             Statement statement;
 
-            queryStr = "SELECT sum(`REALIZOVANA_VREDNOST`) as ukupno FROM rashodi;";
+            queryStr = "SELECT sum(`REALIZOVANA_VREDNOST`) as ukupno FROM rashodi where GODINA=" + godina + "";
             statement = connection.createStatement();
             rs = statement.executeQuery(queryStr);
 
@@ -741,7 +744,7 @@ public class ProjectDao {
         return retvalue;
     }
 
-    public int vratiProsecnuPlatu() {
+    public int vratiProsecnuPlatu(int godina) {
         int retvalue = 0;
         Connection connection = getDBConnection();
         if (connection == null) {
@@ -752,7 +755,7 @@ public class ProjectDao {
             ResultSet rs;
             Statement statement;
 
-            queryStr = "SELECT (sum(`AKONTACIJA`+`DRUGI_DEO`+`BONUS`+`TEREN`)/count(ID)) as prosek FROM prihodi";
+            queryStr = "SELECT (sum(`AKONTACIJA`+`DRUGI_DEO`+`BONUS`+`TEREN`)/count(ID)) as prosek FROM prihodi where AKONTACIJA>0 and DRUGI_DEO>0 and GODINA=" + godina + "";
             statement = connection.createStatement();
             rs = statement.executeQuery(queryStr);
 
@@ -780,7 +783,7 @@ public class ProjectDao {
         return retvalue;
     }
 
-    public int vratiOcekivaneRashode() {
+    public int vratiOcekivaneRashode(int godina) {
         int retvalue = 0;
         Connection connection = getDBConnection();
         if (connection == null) {
@@ -791,7 +794,7 @@ public class ProjectDao {
             ResultSet rs;
             Statement statement;
 
-            queryStr = "SELECT sum(`PLANIRANA_VREDNOST`) as ukupno FROM rashodi;";
+            queryStr = "SELECT sum(`PLANIRANA_VREDNOST`) as ukupno FROM rashodi where GODINA=" + godina + "";
             statement = connection.createStatement();
             rs = statement.executeQuery(queryStr);
 

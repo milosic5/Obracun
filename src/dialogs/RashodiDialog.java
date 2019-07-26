@@ -27,6 +27,15 @@ public class RashodiDialog extends javax.swing.JDialog {
 
     private RashodTableModel tableModel = new RashodTableModel();
     ArrayList<Rashod> listaRashoda;
+    int godina;
+
+    public int getGodina() {
+        return godina;
+    }
+
+    public void setGodina(int godina) {
+        this.godina = godina;
+    }
 
     public RashodiDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -197,13 +206,13 @@ public class RashodiDialog extends javax.swing.JDialog {
 
         for (Rashod rashod1 : listaRashoda) {
             if (rashod.getNaziv().equals(rashod1.getNaziv())) {
-                azurirano = CentralPoint.getInstance().getProjectDao().azurirajRashod(rashod);
+                azurirano = CentralPoint.getInstance().getProjectDao().azurirajRashod(rashod,getGodina());
                 JOptionPane.showMessageDialog(this, "Uspešno ste ažurirali rashod");
                 updateData();
             }
         }
         if (!azurirano) {
-            if (CentralPoint.getInstance().getProjectDao().sacuvajRashod(rashod)) {
+            if (CentralPoint.getInstance().getProjectDao().sacuvajRashod(rashod,getGodina())) {
                 JOptionPane.showMessageDialog(this, "Uspešno ste sačuvali rashod");
                 clearData();
                 updateData();
@@ -276,7 +285,7 @@ public class RashodiDialog extends javax.swing.JDialog {
 
     private void updateData() {
         tableModel.clearData();
-        listaRashoda = CentralPoint.getInstance().getProjectDao().ucitajRashode();
+        listaRashoda = CentralPoint.getInstance().getProjectDao().ucitajRashode(getGodina());
         int id = 0;
         if (listaRashoda.size() > 0) {
             for (Rashod rashod : listaRashoda) {
